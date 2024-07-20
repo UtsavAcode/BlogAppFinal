@@ -6,6 +6,7 @@ namespace BlogApp.Services.Interface
 {
     public interface IUserServices
     {
-        Task<RegisterResponse> RegisterUserAsync(RegisterDto model);
+        Task<UserManagerResponse> RegisterUserAsync(RegisterDto model);
+        Task<UserManagerResponse> LoginUserAsync(LoginDto model);
     }
 }

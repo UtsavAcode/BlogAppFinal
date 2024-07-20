@@ -37,6 +37,25 @@ namespace BlogApp.Controllers
             return BadRequest("Some properties are not valid in user register.");//status code 400
         }
 
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> LoginUserAsync([FromBody] LoginDto model)
+        {
+            if(ModelState.IsValid)
+            {
+                var result = await _userService.LoginUserAsync(model);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+
+            return BadRequest("Some properties are not valid");
+        }
     }
 
 }

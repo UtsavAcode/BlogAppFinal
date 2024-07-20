@@ -3,58 +3,139 @@ using BlogApp.Model.Dto;
 using BlogApp.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BlogApp.Services.Implementation
 {
     public class UserServices : IUserServices
     {
+        private readonly SignInManager<IdentityUser> _signinManager;
+        private readonly ApplicationDbContext _context;
         private UserManager<IdentityUser> _userManager;
-        public UserServices(UserManager<IdentityUser> userManager)
+        private IConfiguration _configuration;
+
+        public UserServices(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signinManager, ApplicationDbContext context, IConfiguration configuration)
         {
-           _userManager = userManager;
+            _userManager = userManager;
+            _configuration = configuration;
+            _context = context;
+            _signinManager = signinManager;
         }
-        public async Task<RegisterResponse> RegisterUserAsync(RegisterDto model)
+
+        public async Task<UserManagerResponse> LoginUserAsync(LoginDto model)
         {
-           if(model == null)
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            if (user == null)
+            {
+                return new UserManagerResponse
+                {
+                    Message = "There is no user with this email address!!",
+                    IsSuccess = false,
+                };
+            }
+
+            var result = await _userManager.CheckPasswordAsync(user, model.Password);
+
+            if (!result)
+            {
+                return new UserManagerResponse
+                {
+                    Message = "Invalid Password",
+                    IsSuccess = false,
+                };
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
+            {
+                new Claim("Email", model.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
+            };
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var token = new JwtSecurityToken(
+                    issuer: _configuration["Jwt:Issuer"],
+                    audience: _configuration["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(30),
+                    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+                );
+
+            string tokenAsString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return new UserManagerResponse
+            {
+                Message = tokenAsString,
+                IsSuccess = true,
+                ExpireDate = token.ValidTo,
+                Roles = userRoles.ToList()
+            };
+        }
+
+        public async Task<UserManagerResponse> RegisterUserAsync(RegisterDto model)
+        {
+            if (model == null)
             {
                 throw new NullReferenceException("Register Model is null");
             }
 
-
             if (model.Password != model.ConfirmPassword)
             {
-                return new RegisterResponse
+                return new UserManagerResponse
                 {
                     Message = "The passwords did not match. Please confirm your password.",
                     IsSuccess = false,
                 };
             }
 
-            var identityUser = new IdentityUser {
+            var identityUser = new IdentityUser
+            {
                 Email = model.Email,
                 UserName = model.Email,
             };
 
-            var result = await _userManager.CreateAsync(identityUser,model.Password);
+            var result = await _userManager.CreateAsync(identityUser, model.Password);
 
             if (result.Succeeded)
             {
-                return new RegisterResponse
+                var roleResult = await _userManager.AddToRoleAsync(identityUser, "User");
+                if (roleResult.Succeeded)
                 {
-                    Message = "User Registration Succeeded.",
-                    IsSuccess = true,
-                };
-
+                    return new UserManagerResponse
+                    {
+                        Message = "User Registration Succeeded.",
+                        IsSuccess = true,
+                    };
+                }
+                else
+                {
+                    return new UserManagerResponse
+                    {
+                        Message = "Role assignment failed",
+                        IsSuccess = false,
+                        Errors = roleResult.Errors.Select(e => e.Description)
+                    };
+                }
             }
 
-            return new RegisterResponse
+            return new UserManagerResponse
             {
                 Message = "User Registration Unsuccessful",
                 IsSuccess = false,
                 Errors = result.Errors.Select(e => e.Description)
             };
-
         }
-    }
 
+    }
 }
