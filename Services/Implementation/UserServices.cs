@@ -1,4 +1,5 @@
 ﻿using BlogApp.Model.Domain;
+using BlogApp.Model.Dto;
 using BlogApp.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,59 +8,52 @@ namespace BlogApp.Services.Implementation
 {
     public class UserServices : IUserServices
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public UserServices(UserManager<ApplicationUser> userManager)
+        private UserManager<IdentityUser> _userManager;
+        public UserServices(UserManager<IdentityUser> userManager)
         {
-            _userManager = userManager;
+           _userManager = userManager;
         }
-
-        public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
+        public async Task<RegisterResponse> RegisterUserAsync(RegisterDto model)
         {
-            return await _userManager.Users.ToListAsync();
-        }
+           if(model == null)
+            {
+                throw new NullReferenceException("Register Model is null");
+            }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(string userId)
-        {
-            return await _userManager.FindByIdAsync(userId);
-        }
 
-        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
-        {
-            var existingUser = await _userManager.FindByIdAsync(user.Id);
-            if (existingUser == null)
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            if (model.Password != model.ConfirmPassword)
+            {
+                return new RegisterResponse
+                {
+                    Message = "The passwords did not match. Please confirm your password.",
+                    IsSuccess = false,
+                };
+            }
 
-            existingUser.Email = user.Email;
-            existingUser.UserName = user.UserName;
-            return await _userManager.UpdateAsync(existingUser);
-        }
+            var identityUser = new IdentityUser {
+                Email = model.Email,
+                UserName = model.Email,
+            };
 
-        public async Task<IdentityResult> DeleteUserAsync(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            var result = await _userManager.CreateAsync(identityUser,model.Password);
 
-            return await _userManager.DeleteAsync(user);
-        }
+            if (result.Succeeded)
+            {
+                return new RegisterResponse
+                {
+                    Message = "User Registration Succeeded.",
+                    IsSuccess = true,
+                };
 
-        public async Task<IdentityResult> AssignAdminRoleAsync(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            }
 
-            return await _userManager.AddToRoleAsync(user, "Admin");
-        }
+            return new RegisterResponse
+            {
+                Message = "User Registration Unsuccessful",
+                IsSuccess = false,
+                Errors = result.Errors.Select(e => e.Description)
+            };
 
-        public async Task<IdentityResult> RemoveAdminRoleAsync(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
-
-            return await _userManager.RemoveFromRoleAsync(user, "Admin");
         }
     }
 

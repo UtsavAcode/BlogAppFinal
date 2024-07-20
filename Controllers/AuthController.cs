@@ -10,34 +10,33 @@ namespace BlogApp.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IUserServices _userService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IUserServices userService)
         {
-            _authService = authService;
+            _userService = userService;
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
-        {
-            var token = await _authService.LoginAsync(model.Email, model.Password);
-            if (token == null)
-                return Unauthorized();
 
-            return Ok(new { Token = token });
+        [HttpPost]
+        [Route("Register")]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterDto model)
+        {
+            if(ModelState.IsValid)
+            {
+                var result = await _userService.RegisterUserAsync(model);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);//status code 200;
+
+                }
+                return BadRequest(result);
+            }
+
+            return BadRequest("Some properties are not valid in user register.");//status code 400
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model)
-        {
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-            var result = await _authService.RegisterUserAsync(user, model.Password);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            return Ok();
-        }
     }
 
 }
