@@ -3,7 +3,11 @@
 namespace BlogApp.Model.Dto
 {
     public class RegisterDto
+
     {
+        [Required]
+        public string Name { get; set; }
+
         [Required]
         [StringLength(50)]
         [EmailAddress]

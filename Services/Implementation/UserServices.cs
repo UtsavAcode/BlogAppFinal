@@ -53,6 +53,7 @@ namespace BlogApp.Services.Implementation
 
             var claims = new List<Claim>
             {
+               
                 new Claim("Email", model.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
@@ -102,7 +103,7 @@ namespace BlogApp.Services.Implementation
             var identityUser = new IdentityUser
             {
                 Email = model.Email,
-                UserName = model.Email,
+                UserName = model.Name,
             };
 
             var result = await _userManager.CreateAsync(identityUser, model.Password);
