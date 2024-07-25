@@ -25,6 +25,48 @@ namespace BlogApp.Services.Implementation
             _signinManager = signinManager;
         }
 
+        public async Task<UserManagerResponse> DeleteUserAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new UserManagerResponse { 
+                
+                    Message="The user cannot be null.",
+                    IsSuccess=false,
+                };
+
+            }
+         
+               var result = await _userManager.DeleteAsync(user);
+
+
+            if (result.Succeeded)
+            {
+                return new UserManagerResponse
+                {
+                    Message = "The User is deleted Successfully",
+                    IsSuccess = true,
+                };
+            }
+            return new UserManagerResponse
+            {
+                Message = "Can't delete the user",
+                IsSuccess = false,
+            };
+        }
+
+        public async Task<IEnumerable<IdentityUser>> GetAllAsync()
+        {
+            return await _userManager.Users.ToListAsync();
+        }
+
+        public async Task<IdentityUser>GetUserAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
         public async Task<UserManagerResponse> LoginUserAsync(LoginDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -55,7 +97,9 @@ namespace BlogApp.Services.Implementation
             {
                
                 new Claim("Email", model.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+              
+            
             };
 
             foreach (var role in userRoles)
@@ -80,7 +124,9 @@ namespace BlogApp.Services.Implementation
                 Message = tokenAsString,
                 IsSuccess = true,
                 ExpireDate = token.ValidTo,
-                Roles = userRoles.ToList()
+                Roles = userRoles.ToList(),
+                Name = user.UserName,
+             
             };
         }
 
@@ -137,6 +183,58 @@ namespace BlogApp.Services.Implementation
                 Errors = result.Errors.Select(e => e.Description)
             };
         }
+
+        public async Task<UserManagerResponse> UpdateUserAsync(UpdateDto model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model), "Update model cannot be null");
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            if (user == null)
+            {
+                return new UserManagerResponse
+                {
+                    Message = "User not found",
+                    IsSuccess = false,
+                };
+            }
+
+            if (!string.IsNullOrEmpty(model.Email))
+            {
+                user.Email = model.Email;
+                user.UserName = model.Email; // Assuming username is the same as email
+            }
+
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                user.UserName = model.Name;
+            }
+
+            
+
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            if (updateResult.Succeeded)
+            {
+                return new UserManagerResponse
+                {
+                    Message = "User update succeeded.",
+                    IsSuccess = true,
+                };
+            }
+
+            return new UserManagerResponse
+            {
+                Message = "User update unsuccessful",
+                IsSuccess = false,
+                Errors = updateResult.Errors.Select(e => e.Description)
+            };
+        }
+
+        
 
     }
 }

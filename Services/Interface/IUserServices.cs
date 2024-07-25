@@ -8,5 +8,9 @@ namespace BlogApp.Services.Interface
     {
         Task<UserManagerResponse> RegisterUserAsync(RegisterDto model);
         Task<UserManagerResponse> LoginUserAsync(LoginDto model);
+        Task<IdentityUser>GetUserAsync(string email);
+        Task<IEnumerable<IdentityUser>> GetAllAsync();
+        Task<UserManagerResponse> UpdateUserAsync(UpdateDto model);
+        Task<UserManagerResponse> DeleteUserAsync(string email);
     }
 }
