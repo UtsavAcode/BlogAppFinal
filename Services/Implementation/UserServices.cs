@@ -1,6 +1,7 @@
 ﻿using BlogApp.Model.Domain;
 using BlogApp.Model.Dto;
 using BlogApp.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -23,6 +24,30 @@ namespace BlogApp.Services.Implementation
             _configuration = configuration;
             _context = context;
             _signinManager = signinManager;
+        }
+
+        public async Task<UserManagerResponse> CreateAdminAsync(AdminDto model)
+        {
+            var user = new IdentityUser
+            {
+                Email = model.Email,
+                UserName = model.name,
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user,"Admin");
+            }
+
+            return new UserManagerResponse
+            {
+                Message = "The admin cannot be created",
+                IsSuccess = false,
+                
+            };
+            
         }
 
         public async Task<UserManagerResponse> DeleteUserAsync(string email)
@@ -234,6 +259,8 @@ namespace BlogApp.Services.Implementation
             };
         }
 
+
+        
         
 
     }

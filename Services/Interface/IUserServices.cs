@@ -12,5 +12,7 @@ namespace BlogApp.Services.Interface
         Task<IEnumerable<IdentityUser>> GetAllAsync();
         Task<UserManagerResponse> UpdateUserAsync(UpdateDto model);
         Task<UserManagerResponse> DeleteUserAsync(string email);
+
+        Task<UserManagerResponse> CreateAdminAsync(AdminDto model);
     }
 }

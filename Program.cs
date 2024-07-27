@@ -7,12 +7,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using BlogApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDbContext<BlogDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("BlogDbContextConnection")));
+
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -44,6 +49,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IBlogServices,BlogService>();
+builder.Services.AddScoped<ITagService, TagService>();
+
 
 builder.Services.AddCors(options =>
 {
