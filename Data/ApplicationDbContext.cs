@@ -19,6 +19,6 @@ public class ApplicationDbContext : IdentityDbContext
         Seeder.Seed(builder);
     }
 
-    public DbSet<User> Users {  get; set; }
+    public DbSet<User> Users { get; set; }
 
 }
