@@ -2,6 +2,7 @@
 using BlogApp.Model.Domain;
 using BlogApp.Model.Dto;
 using BlogApp.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogApp.Services.Implementation
 {
@@ -44,8 +45,6 @@ namespace BlogApp.Services.Implementation
             }
             catch (Exception ex)
             {
-                // Log the exception if needed
-                // _logger.LogError(ex, "Error adding new tag");
 
                 return new BlogManagerResponse
                 {
@@ -55,19 +54,35 @@ namespace BlogApp.Services.Implementation
             }
         }
 
-        public Task<BlogManagerResponse> DeleteAsync(Guid id)
+        public async Task<BlogManagerResponse> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var tag = await _context.Tags.FindAsync(id);
+
+            if(tag != null)
+            {
+                 _context.Tags.Remove(tag);
+                await _context.SaveChangesAsync();
+                return new BlogManagerResponse
+                {
+                    Message = "Tag Deleted",
+                    IsSuccess = true,
+                };
+            }
+            return new BlogManagerResponse
+            {
+                Message = "No Such Tag Found",
+                IsSuccess = false,
+            };
         }
 
-        public Task<IEnumerable<Tag>> GetAllAsync()
+        public async Task<IEnumerable<Tag>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Tags.ToListAsync();
         }
 
-        public Task GetAsync(Guid id)
+        public Task GetAsync(int id)
         {
-            throw new NotImplementedException();
+            
         }
 
         public Task<BlogManagerResponse> UpdateAsync(Tag tag)

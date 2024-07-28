@@ -40,5 +40,30 @@ namespace BlogApp.Controllers
 
 
         }
+
+        [HttpGet]
+        [Route("GetTags")]
+        public async Task<IActionResult> GetAllTags()
+        {
+            var tags = await _tagService.GetAllAsync();
+            if(tags == null)
+            {
+                return BadRequest("Tags not found");
+            }
+            return Ok(tags);
+        }
+
+        [HttpDelete]
+        [Route("Delete/{id}")]
+        public async Task<IActionResult> DeleteTag(int id)
+        {
+            var response = await _tagService.DeleteAsync(id);
+
+            if (response.IsSuccess)
+            {
+                return Ok();
+            }
+            return BadRequest(response);
+        }
     }
 }

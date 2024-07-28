@@ -6,9 +6,9 @@ namespace BlogApp.Services.Interface
     public interface ITagService
     {
         Task<IEnumerable<Tag>> GetAllAsync();
-        Task GetAsync(Guid id);
+        Task GetAsync(int id);
         Task<BlogManagerResponse> AddAsync(AddTagDto tag);
         Task<BlogManagerResponse> UpdateAsync(Tag tag);
-        Task<BlogManagerResponse> DeleteAsync(Guid id);
+        Task<BlogManagerResponse> DeleteAsync(int id);
     }
 }
