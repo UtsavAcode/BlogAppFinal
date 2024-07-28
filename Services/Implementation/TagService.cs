@@ -85,9 +85,27 @@ namespace BlogApp.Services.Implementation
             return await _context.Tags.FindAsync(id);
         }
 
-        public Task<BlogManagerResponse> UpdateAsync(Tag tag)
+        public async Task<BlogManagerResponse> UpdateAsync(UpdateTagDto tag)
         {
-            throw new NotImplementedException();
+            var existingTag = await _context.Tags.FindAsync(tag.Id);
+
+            if (existingTag != null)
+            {
+                existingTag.Name = tag.Name;
+
+                await _context.SaveChangesAsync();
+                return new BlogManagerResponse
+                {
+                    Message = "Tag Name Updated",
+                    IsSuccess = true,
+                };
+
+            }
+            return new BlogManagerResponse
+            {
+                Message = "No such Tag",
+                IsSuccess = false,
+            };
         }
     }
 }

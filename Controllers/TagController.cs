@@ -78,5 +78,22 @@ namespace BlogApp.Controllers
             }
             return BadRequest();
         }
+
+        [HttpPut]
+        [Route("UpdateTag")]
+        public async Task<IActionResult> UpdateTag(UpdateTagDto model)
+        {
+            if (model == null)
+            {
+                return BadRequest("The model is null");
+            }
+
+            var response = await _tagService.UpdateAsync(model);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace BlogApp.Services.Interface
         Task<IEnumerable<Tag>> GetAllAsync();
         Task<Tag> GetAsync(int id);
         Task<BlogManagerResponse> AddAsync(AddTagDto tag);
-        Task<BlogManagerResponse> UpdateAsync(Tag tag);
+        Task<BlogManagerResponse> UpdateAsync(UpdateTagDto tag);
         Task<BlogManagerResponse> DeleteAsync(int id);
     }
 }
