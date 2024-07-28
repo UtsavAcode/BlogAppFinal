@@ -80,9 +80,9 @@ namespace BlogApp.Services.Implementation
             return await _context.Tags.ToListAsync();
         }
 
-        public Task GetAsync(int id)
+        public async Task<Tag> GetAsync(int id)
         {
-            
+            return await _context.Tags.FindAsync(id);
         }
 
         public Task<BlogManagerResponse> UpdateAsync(Tag tag)

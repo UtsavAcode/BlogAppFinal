@@ -65,5 +65,18 @@ namespace BlogApp.Controllers
             }
             return BadRequest(response);
         }
+
+        [HttpGet]
+        [Route("Get/{id}")]
+        public async Task<IActionResult> GetTag(int id)
+        {
+            var tag = await _tagService.GetAsync(id);
+
+            if(tag != null)
+            {
+                return Ok(tag);
+            }
+            return BadRequest();
+        }
     }
 }
