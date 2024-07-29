@@ -1,4 +1,5 @@
-﻿using BlogApp.Migrations.BlogDb;
+﻿
+using BlogApp.Model.Domain;
 
 namespace BlogApp.Model.Dto
 {

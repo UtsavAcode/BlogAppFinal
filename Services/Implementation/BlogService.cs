@@ -1,4 +1,5 @@
-﻿using BlogApp.Migrations.BlogDb;
+﻿using BlogApp.Data;
+using BlogApp.Model.Domain;
 using BlogApp.Model.Dto;
 using BlogApp.Services.Interface;
 
@@ -6,19 +7,21 @@ namespace BlogApp.Services.Implementation
 {
     public class BlogService : IBlogServices
     {
-        private readonly ApplicationDbContext _context;
+        private readonly BlogDbContext _context;
 
-        public BlogService(ApplicationDbContext context)
+        public BlogService(BlogDbContext context)
         {
             _context = context;
         }
+
+
         public async Task<BlogManagerResponse> AddAsync(BlogPostDto blogPost)
         {
-            if(blogPost == null)
+            if (blogPost == null)
             {
                 return new BlogManagerResponse
                 {
-                    Message = "Tag data is missing.",
+                    Message = "Blog post data is missing.",
                     IsSuccess = false,
                 };
             }
@@ -27,8 +30,37 @@ namespace BlogApp.Services.Implementation
             {
                 var blog = new BlogPost
                 {
-                    PageTitle = blogPost.Title,
-                }
+                    Title = blogPost.Title,
+                    Slug = blogPost.Slug,
+                    MetaDescription = blogPost.MetaDescription,
+                    Keywords = blogPost.Keywords,
+                    Content = blogPost.Content,
+                    Categories = blogPost.Categories,
+                    FeaturedImage = blogPost.FeaturedImage,
+                    AltText = blogPost.AltText,
+                    AuthorId = blogPost.AuthorId,
+                    Visible = blogPost.Visible,
+                    
+                    CreatedAt = DateTime.UtcNow, // Assuming you have CreatedAt property in BlogPost model
+                    UpdateAt = DateTime.UtcNow  // Assuming you have UpdatedAt property in BlogPost model
+                };
+
+                _context.BlogPosts.Add(blog);
+                await _context.SaveChangesAsync();
+
+                return new BlogManagerResponse
+                {
+                    Message = "Blog post added successfully.",
+                    IsSuccess = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BlogManagerResponse
+                {
+                    Message = $"Failed to add blog post: {ex.Message}",
+                    IsSuccess = false,
+                };
             }
         }
 
@@ -52,4 +84,12 @@ namespace BlogApp.Services.Implementation
             throw new NotImplementedException();
         }
     }
-}
+
+    
+
+    
+
+
+
+    }
+
