@@ -1,11 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlogApp.Model.Domain;
 
-namespace BlogApp.Model.Domain
+namespace BlogApp.Model.Dto
 {
-    public class BlogPost
+    public class BlogPostDto
     {
-        public int Id { get; set; }
-
         public string PageTitle { get; set; }
         public string Title { get; set; }
         public string Slug { get; set; }
@@ -13,7 +11,7 @@ namespace BlogApp.Model.Domain
         public string Keywords { get; set; }
         public string Content { get; set; }
         public string Categories { get; set; }
-    
+
         public string FeaturedImage { get; set; }
         public string AltText { get; set; }
         public string AuthorId { get; set; }
@@ -23,6 +21,4 @@ namespace BlogApp.Model.Domain
         public User Author { get; set; }
         public ICollection<Tag> Tags { get; set; }
     }
-        
-
 }

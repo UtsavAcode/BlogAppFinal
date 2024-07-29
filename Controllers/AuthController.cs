@@ -9,7 +9,7 @@ namespace BlogApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize("SuperAdmin")]
+
     public class AuthController : ControllerBase
     {
         private readonly IUserServices _userService;
@@ -59,6 +59,7 @@ namespace BlogApp.Controllers
             return BadRequest("Some properties are not valid");
         }
 
+       
         [HttpGet]
         [Route("Get")]
         public async Task<IActionResult> GetUserAsync([FromQuery] string email)
@@ -73,6 +74,7 @@ namespace BlogApp.Controllers
             return Ok(user); 
         }
 
+        
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult> GetAllUserAsync()
@@ -106,8 +108,9 @@ namespace BlogApp.Controllers
             return BadRequest(response);    
         }
 
+        [Authorize("SuperAdmin")]
         [HttpDelete]
-        [Route("Delete/{email}")]
+
         public async Task<IActionResult> DeleteUserAsync(string email)
         {
             var response = await _userService.DeleteUserAsync(email);

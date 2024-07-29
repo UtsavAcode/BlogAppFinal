@@ -1,14 +1,15 @@
 ﻿using BlogApp.Migrations.BlogDb;
+using BlogApp.Model.Dto;
 
 namespace BlogApp.Services.Interface
 {
     public interface IBlogServices
     {
-        Task<IEnumerable<BlogPost>> GetAllAsync();
-        Task<BlogPost?> GetAsync(Guid id);
+        Task<IEnumerable<BlogPostDto>> GetAllAsync();
+        Task<BlogPostDto?> GetAsync(int id);
       //  Task<BlogPost?> GetByUrlHandleAsync(string urlHandle);
-        Task<BlogPost> AddAsync(BlogPost blogPost);
-        Task<BlogPost?> UpdateAsync(BlogPost blogPost);
-        Task<BlogPost?> DeleteAsync(Guid id);
+        Task<BlogManagerResponse> AddAsync(BlogPostDto blogPost);
+        Task<BlogManagerResponse> UpdateAsync(BlogPostDto blogPost);
+        Task<BlogManagerResponse> DeleteAsync(int id);
     }
 }
