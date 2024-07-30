@@ -51,6 +51,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IBlogServices,BlogService>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 
 builder.Services.AddCors(options =>
