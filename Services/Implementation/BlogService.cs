@@ -3,6 +3,7 @@ using BlogApp.Model.Domain;
 using BlogApp.Model.Dto;
 using BlogApp.Services.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,20 +22,27 @@ namespace BlogApp.Services.Implementation
             _imageService = imageService;
         }
 
-        public async Task<BlogManagerResponse> AddAsync(BlogPostDto blogPost)
+        public async Task<BlogManagerResponse> AddAsync(BlogPostDto blogPost, IFormFile? image, string authorId)
         {
             if (blogPost == null)
             {
                 return new BlogManagerResponse
                 {
-                    Message = "Blog post data is missing.",
+                    Message = "The Blog Post is null",
                     IsSuccess = false,
                 };
             }
 
             try
             {
-                var blog = new BlogPost
+                // Handle image upload
+                string? imagePath = null;
+                if (image != null && image.Length > 0)
+                {
+                    imagePath = await _imageService.UploadImageAsync(image);
+                }
+
+                var newblogPost = new BlogPost
                 {
                     Title = blogPost.Title,
                     Slug = blogPost.Slug,
@@ -42,24 +50,20 @@ namespace BlogApp.Services.Implementation
                     Keywords = blogPost.Keywords,
                     Content = blogPost.Content,
                     Categories = blogPost.Categories,
-                    AltText = blogPost.AltText,
-                    AuthorId = blogPost.AuthorId,
+                    FeaturedImagePath = imagePath, // Save the image path
+                    AuthorId = authorId,
                     Visible = blogPost.Visible,
                     CreatedAt = DateTime.UtcNow,
-                    UpdateAt = DateTime.UtcNow
+                    UpdateAt = DateTime.UtcNow,
+                    Tags = await _context.Tags.Where(t => blogPost.TagIds.Contains(t.Id)).ToListAsync()
                 };
 
-                if (blogPost.FeaturedImage != null)
-                {
-                    blog.FeaturedImagePath = await _imageService.UploadImageAsync(blogPost.FeaturedImage);
-                }
-
-                _context.BlogPosts.Add(blog);
+                await _context.BlogPosts.AddAsync(newblogPost);
                 await _context.SaveChangesAsync();
 
                 return new BlogManagerResponse
                 {
-                    Message = "Blog post added successfully.",
+                    Message = "New Blog Post added",
                     IsSuccess = true,
                 };
             }
@@ -67,32 +71,36 @@ namespace BlogApp.Services.Implementation
             {
                 return new BlogManagerResponse
                 {
-                    Message = $"Failed to add blog post: {ex.Message}",
-                    IsSuccess = false,
+                    Message = $"Failed to add the blog post: {ex.Message}",
+                    IsSuccess = false
                 };
             }
         }
+
 
         public Task<BlogManagerResponse> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<BlogPostDto>> GetAllAsync()
+        public Task<IEnumerable<BlogPost>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<BlogPostDto?> GetAsync(int id)
+        public Task<BlogPost?> GetAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<BlogManagerResponse> UpdateAsync(BlogPostDto blogPost)
+        public Task<BlogManagerResponse> UpdateAsync(UpdateBlogPostDto blogPost)
         {
             throw new NotImplementedException();
         }
 
-        // Other methods (DeleteAsync, GetAllAsync, GetAsync, UpdateAsync)
+        public Task<BlogManagerResponse> UpdateImageAsync(IFormFile image, int blogPostId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

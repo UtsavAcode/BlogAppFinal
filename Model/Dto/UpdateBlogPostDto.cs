@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace BlogApp.Model.Domain
+﻿namespace BlogApp.Model.Dto
 {
-    public class BlogPost
+    public class UpdateBlogPostDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -12,14 +10,8 @@ namespace BlogApp.Model.Domain
         public string Content { get; set; }
         public string Categories { get; set; }
         public string FeaturedImagePath { get; set; }
-     
-        public string AuthorId { get; set; }
+        public string AltText { get; set; }
         public bool Visible { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdateAt { get; set; }
-        public User Author { get; set; }
-        public ICollection<Tag> Tags { get; set; }
+        public List<int> TagIds { get; set; }
     }
-        
-
 }
