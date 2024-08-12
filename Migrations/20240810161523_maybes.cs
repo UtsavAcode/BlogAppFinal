@@ -4,22 +4,23 @@
 
 namespace BlogApp.Migrations
 {
-    public partial class image : Migration
+    public partial class maybes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "FeaturedImage",
+            migrationBuilder.AddColumn<string>(
+                name: "FeaturedImagePath",
                 table: "BlogPosts",
-                newName: "FeaturedImagePath");
+                type: "text",
+                nullable: false,
+                defaultValue: "");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
+            migrationBuilder.DropColumn(
                 name: "FeaturedImagePath",
-                table: "BlogPosts",
-                newName: "FeaturedImage");
+                table: "BlogPosts");
         }
     }
 }

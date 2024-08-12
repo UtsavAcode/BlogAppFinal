@@ -108,9 +108,10 @@ namespace BlogApp.Controllers
             return BadRequest(response);    
         }
 
-        [Authorize("SuperAdmin")]
-        [HttpDelete]
 
+        
+        [HttpDelete]
+        [Route("Delete/{email}")]
         public async Task<IActionResult> DeleteUserAsync(string email)
         {
             var response = await _userService.DeleteUserAsync(email);

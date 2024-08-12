@@ -64,7 +64,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-
+  
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -79,6 +79,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // This should be included
 
 app.UseRouting();
 
@@ -90,6 +91,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 SeedDatabase(app);
+
 
 app.Run();
 

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlogApp.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240730162457_image")]
-    partial class image
+    [Migration("20240812083635_khai")]
+    partial class khai
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,18 +32,11 @@ namespace BlogApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AltText")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("AuthorId")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("AuthorId1")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Categories")
+                    b.Property<string>("AuthorName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -58,15 +51,7 @@ namespace BlogApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Keywords")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("MetaDescription")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -74,15 +59,7 @@ namespace BlogApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Visible")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId1");
 
                     b.ToTable("BlogPosts");
                 });
@@ -104,31 +81,6 @@ namespace BlogApp.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("BlogApp.Model.Domain.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("BlogPostTag", b =>
                 {
                     b.Property<int>("BlogPostsId")
@@ -142,17 +94,6 @@ namespace BlogApp.Migrations
                     b.HasIndex("TagsId");
 
                     b.ToTable("BlogPostTag");
-                });
-
-            modelBuilder.Entity("BlogApp.Model.Domain.BlogPost", b =>
-                {
-                    b.HasOne("BlogApp.Model.Domain.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("BlogPostTag", b =>

@@ -52,35 +52,49 @@ namespace BlogApp.Services.Implementation
 
         public async Task<UserManagerResponse> DeleteUserAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
+            try
             {
-                return new UserManagerResponse { 
-                
-                    Message="The user cannot be null.",
-                    IsSuccess=false,
-                };
+                var user = await _userManager.FindByEmailAsync(email);
 
-            }
-         
-               var result = await _userManager.DeleteAsync(user);
+                if (user == null)
+                {
+                    return new UserManagerResponse
+                    {
+                        Message = "User not found",
+                        IsSuccess = false
+                    };
+                }
 
+                var result = await _userManager.DeleteAsync(user);
 
-            if (result.Succeeded)
-            {
+                if (result.Succeeded)
+                {
+                    return new UserManagerResponse
+                    {
+                        Message = "User deleted successfully",
+                        IsSuccess = true
+                    };
+                }
+
                 return new UserManagerResponse
                 {
-                    Message = "The User is deleted Successfully",
-                    IsSuccess = true,
+                    Message = "Failed to delete user",
+                    IsSuccess = false,
+                    Errors = result.Errors.Select(e => e.Description)
                 };
             }
-            return new UserManagerResponse
+            catch (Exception ex)
             {
-                Message = "Can't delete the user",
-                IsSuccess = false,
-            };
+                // Log exception
+                return new UserManagerResponse
+                {
+                    Message = "An error occurred while deleting the user",
+                    IsSuccess = false,
+                    Errors = new[] { ex.Message }
+                };
+            }
         }
+
 
         public async Task<IEnumerable<IdentityUser>> GetAllAsync()
         {
@@ -151,6 +165,7 @@ namespace BlogApp.Services.Implementation
                 ExpireDate = token.ValidTo,
                 Roles = userRoles.ToList(),
                 Name = user.UserName,
+                Id= user.Id,
              
             };
         }
@@ -167,6 +182,16 @@ namespace BlogApp.Services.Implementation
                 return new UserManagerResponse
                 {
                     Message = "The passwords did not match. Please confirm your password.",
+                    IsSuccess = false,
+                };
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                return new UserManagerResponse
+                {
+                    Message = "An account with this email already exists.",
                     IsSuccess = false,
                 };
             }
@@ -208,6 +233,7 @@ namespace BlogApp.Services.Implementation
                 Errors = result.Errors.Select(e => e.Description)
             };
         }
+
 
         public async Task<UserManagerResponse> UpdateUserAsync(UpdateDto model)
         {

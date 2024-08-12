@@ -3,6 +3,7 @@ using System;
 using BlogApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlogApp.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240810094825_noidead")]
+    partial class noidead
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +36,8 @@ namespace BlogApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("AuthorName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("AuthorId1")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -45,19 +46,22 @@ namespace BlogApp.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("FeaturedImagePath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("MetaDescription")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("TagId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId1");
+
+                    b.HasIndex("TagId");
 
                     b.ToTable("BlogPosts");
                 });
@@ -79,34 +83,54 @@ namespace BlogApp.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("BlogPostTag", b =>
+            modelBuilder.Entity("BlogApp.Model.Domain.User", b =>
                 {
-                    b.Property<int>("BlogPostsId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<int>("TagsId")
-                        .HasColumnType("integer");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.HasKey("BlogPostsId", "TagsId");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.HasIndex("TagsId");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.ToTable("BlogPostTag");
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("User");
                 });
 
-            modelBuilder.Entity("BlogPostTag", b =>
+            modelBuilder.Entity("BlogApp.Model.Domain.BlogPost", b =>
                 {
-                    b.HasOne("BlogApp.Model.Domain.BlogPost", null)
-                        .WithMany()
-                        .HasForeignKey("BlogPostsId")
+                    b.HasOne("BlogApp.Model.Domain.User", "Author")
+                        .WithMany("BlogPosts")
+                        .HasForeignKey("AuthorId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BlogApp.Model.Domain.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("BlogPosts")
+                        .HasForeignKey("TagId");
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("BlogApp.Model.Domain.Tag", b =>
+                {
+                    b.Navigation("BlogPosts");
+                });
+
+            modelBuilder.Entity("BlogApp.Model.Domain.User", b =>
+                {
+                    b.Navigation("BlogPosts");
                 });
 #pragma warning restore 612, 618
         }

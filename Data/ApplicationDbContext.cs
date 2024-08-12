@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BlogApp.Seeder;
+using System.Reflection.Emit;
 
 public class ApplicationDbContext : IdentityDbContext
 {
@@ -15,7 +16,9 @@ public class ApplicationDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
+        builder.Entity<IdentityUser>()
+       .HasIndex(u => u.Email)
+       .IsUnique();
         Seeder.Seed(builder);
     }
 
