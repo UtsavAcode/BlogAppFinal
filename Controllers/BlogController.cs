@@ -72,6 +72,19 @@ namespace BlogApp.Controllers
             return BadRequest("No blogs found");
         }
 
+        [HttpGet]
+        [Route("GetBlog/{id}")]
+        public async Task<IActionResult> GetBlog(int id)
+        {
+            var blog = await _blogServices.GetAsync(id);
+            if(blog != null)
+            {
+                return Ok(blog);    
+            }
+            return BadRequest("No Blog");
+
+        }
+
         [HttpDelete]
         [Route("DeleteBlog/{id}")]
         public async Task<IActionResult> DeleteBlog(int id)
@@ -85,7 +98,7 @@ namespace BlogApp.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost]      
         [Route("UploadImage")]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile image)
         {
@@ -103,6 +116,33 @@ namespace BlogApp.Controllers
 
             return BadRequest("Image upload failed");
         }
+
+
+            [HttpPut]
+            [Route("UpdateBlogPost")]
+            public async Task<IActionResult> UpdateBlogPost([FromForm] UpdateBlogPostDto model)
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                try
+                {
+                    var response = await _blogServices.UpdateAsync(model);
+
+                    if (response.IsSuccess)
+                    {
+                        return Ok(response);
+                    }
+
+                    return BadRequest(response);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
+            }
 
 
 

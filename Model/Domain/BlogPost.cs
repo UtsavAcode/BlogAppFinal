@@ -15,20 +15,12 @@ namespace BlogApp.Model.Domain
         public string AuthorName { get; set; }
         public string FeaturedImagePath { get; set; }
 
-       
+        //public bool Visible { get; set; }
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
         
         //  public string Slug { get; set; }
         // public string Keywords { get; set; }
-
-
-        //  public bool Visible { get; set; }
-
         // public DateTime UpdateAt { get; set; }
-
-
-
-
         // public ICollection<Tag> Tags { get; set; }
     }
 

@@ -126,15 +126,69 @@ namespace BlogApp.Services.Implementation
           .ToListAsync();
         }
 
-        public Task<BlogPost?> GetAsync(int id)
+        public async Task<BlogPost?> GetAsync(int id) { 
+         return await _context.BlogPosts
+        .Include(bp => bp.Tags) // Ensure tags are included
+        .FirstOrDefaultAsync(bp => bp.Id == id);
+    }
+
+        public async Task<BlogManagerResponse> UpdateAsync(UpdateBlogPostDto blogPost)
         {
-            throw new NotImplementedException();
+            var post = await _context.BlogPosts
+                .Include(bp => bp.Tags)
+                .FirstOrDefaultAsync(bp => bp.Id == blogPost.Id);
+
+            if (post == null)
+            {
+                return new BlogManagerResponse
+                {
+                    Message = "Blog post not found",
+                    IsSuccess = false,
+                };
+            }
+
+            post.Title = blogPost.Title;
+            post.MetaDescription = blogPost.MetaDescription;
+            post.Content = blogPost.Content;
+
+            if (blogPost.Image != null)
+            {
+                post.FeaturedImagePath = await _imageService.UpdateImageAsync(blogPost.Image, post.FeaturedImagePath);
+            }
+
+            // If tagIds are provided, update the tags
+            if (blogPost.TagIds != null && blogPost.TagIds.Any())
+            {
+                var currentTagIds = post.Tags.Select(t => t.Id).ToList();
+                var newTagIds = blogPost.TagIds;
+
+                // Tags to remove (those present in current tags but not in the new tags)
+                var tagsToRemove = post.Tags.Where(t => !newTagIds.Contains(t.Id)).ToList();
+                foreach (var tag in tagsToRemove)
+                {
+                    post.Tags.Remove(tag);
+                }
+
+                // Tags to add (those present in new tags but not in current tags)
+                var tagsToAdd = await _context.Tags
+                    .Where(t => newTagIds.Contains(t.Id) && !currentTagIds.Contains(t.Id))
+                    .ToListAsync();
+                foreach (var tag in tagsToAdd)
+                {
+                    post.Tags.Add(tag);
+                }
+            }
+
+            _context.BlogPosts.Update(post);
+            await _context.SaveChangesAsync();
+
+            return new BlogManagerResponse
+            {
+                Message = "Blog post updated successfully",
+                IsSuccess = true,
+            };
         }
 
-        public Task<BlogManagerResponse> UpdateAsync(UpdateBlogPostDto blogPost)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<BlogManagerResponse> UpdateImageAsync(IFormFile image, int blogPostId)
         {

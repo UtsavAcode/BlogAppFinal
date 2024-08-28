@@ -79,7 +79,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // This should be included
+app.UseStaticFiles(); 
 
 app.UseRouting();
 
@@ -93,7 +93,7 @@ app.MapControllers();
 SeedDatabase(app);
 
 
-app.Run();
+    app.Run();
 
 void SeedDatabase(IHost app)
 {

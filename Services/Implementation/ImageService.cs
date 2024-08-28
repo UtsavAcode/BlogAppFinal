@@ -26,20 +26,30 @@ namespace BlogApp.Services.Implementation
         }
 
 
-        public async Task<string> UpdateImageAsync(IFormFile image, string existingImagepath)
+        public async Task<string> UpdateImageAsync(IFormFile image, string existingImagePath)
         {
-            if(!string.IsNullOrEmpty(existingImagepath))
+            try
             {
-                var fullPath = Path.Combine(_imageDirectory,existingImagepath);
-                if(File.Exists(fullPath))
+                // Delete existing image if path is not null or empty
+                if (!string.IsNullOrEmpty(existingImagePath))
                 {
-                    File.Delete(fullPath);
+                    var fullPath = Path.Combine(_imageDirectory, existingImagePath.TrimStart('/'));
+                    if (File.Exists(fullPath))
+                    {
+                        File.Delete(fullPath);
+                    }
                 }
-            }
 
-            return await UploadImageAsync(image);
+                // Upload the new image
+                return await UploadImageAsync(image);
+            }
+            catch (Exception ex)
+            {
+                // Log the error or handle it as needed
+                throw new Exception("An error occurred while updating the image.", ex);
+            }
         }
-        
+
         public async Task<string> UploadImageAsync(IFormFile image)
         {
            if(image == null || image.Length == 0)
