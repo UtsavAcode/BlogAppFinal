@@ -77,7 +77,7 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> GetBlog(int id)
         {
             var blog = await _blogServices.GetAsync(id);
-            if(blog != null)
+            if(blog != null)    
             {
                 return Ok(blog);    
             }
