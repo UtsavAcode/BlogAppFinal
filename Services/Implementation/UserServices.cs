@@ -38,16 +38,16 @@ namespace BlogApp.Services.Implementation
 
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user,"Admin");
+                await _userManager.AddToRoleAsync(user, "Admin");
             }
 
             return new UserManagerResponse
             {
                 Message = "The admin cannot be created",
                 IsSuccess = false,
-                
+
             };
-            
+
         }
 
         public async Task<UserManagerResponse> DeleteUserAsync(string email)
@@ -101,9 +101,28 @@ namespace BlogApp.Services.Implementation
             return await _userManager.Users.ToListAsync();
         }
 
-        public async Task<IdentityUser>GetUserAsync(string email)
+        public async Task<IdentityUser> GetUserAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<UserStatsDto> GetUserRegistrationStatsAsync()
+        {
+            var today = DateTime.UtcNow;
+            var weekAgo = today.AddDays(-7);
+            var monthAgo = today.AddMonths(-1);
+            var yearAgo = today.AddYears(-1);
+
+            var weeklyCount = await _context.Users.CountAsync(u => u.RegisteredAt >= weekAgo);
+            var monthlyCount = await _context.Users.CountAsync(u => u.RegisteredAt >= monthAgo);
+            var yearlyCount = await _context.Users.CountAsync(u => u.RegisteredAt >= yearAgo);
+
+            return new UserStatsDto
+            {
+                WeeklyCount = weeklyCount,
+                MonthlyCount= monthlyCount,
+                YearlyCount = yearlyCount
+            };
         }
 
         public async Task<UserManagerResponse> LoginUserAsync(LoginDto model)
@@ -134,11 +153,11 @@ namespace BlogApp.Services.Implementation
 
             var claims = new List<Claim>
             {
-               
+
                 new Claim("Email", model.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-              
-            
+
+
             };
 
             foreach (var role in userRoles)
@@ -165,8 +184,8 @@ namespace BlogApp.Services.Implementation
                 ExpireDate = token.ValidTo,
                 Roles = userRoles.ToList(),
                 Name = user.UserName,
-                Id= user.Id,
-             
+                Id = user.Id,
+
             };
         }
 
@@ -200,12 +219,25 @@ namespace BlogApp.Services.Implementation
             {
                 Email = model.Email,
                 UserName = model.Name,
+                //RegisteredAt = DateTime.UtcNow
             };
 
             var result = await _userManager.CreateAsync(identityUser, model.Password);
 
             if (result.Succeeded)
             {
+                var user = new User
+                {
+                    Name = model.Name,
+                    Email = model.Email,
+                    Password = model.Password, // Store hashed password if needed
+                    RegisteredAt = DateTime.UtcNow // Store the current time as registration date
+                };
+
+                // Save the User to the database (you will need to implement this logic)
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
                 var roleResult = await _userManager.AddToRoleAsync(identityUser, "User");
                 if (roleResult.Succeeded)
                 {
@@ -264,7 +296,7 @@ namespace BlogApp.Services.Implementation
                 user.UserName = model.Name;
             }
 
-            
+
 
             var updateResult = await _userManager.UpdateAsync(user);
 
@@ -286,8 +318,8 @@ namespace BlogApp.Services.Implementation
         }
 
 
-        
-        
+
+
 
     }
 }

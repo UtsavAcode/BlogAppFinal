@@ -2,19 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BlogApp.Migrations.ApplicationDb
+namespace BlogApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240904150815_news")]
-    partial class news
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,6 +40,9 @@ namespace BlogApp.Migrations.ApplicationDb
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -76,21 +77,21 @@ namespace BlogApp.Migrations.ApplicationDb
                     b.HasData(
                         new
                         {
-                            Id = "a8f92217-3751-4717-8c7c-8837b0453873",
+                            Id = "9bc56286-96db-4290-a73b-757546808476",
                             ConcurrencyStamp = "1",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "7a4f6ba9-69b3-40b4-93e2-34de5d89d241",
+                            Id = "d0f32048-20a0-473c-8e4a-c9535eb5f6a5",
                             ConcurrencyStamp = "2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2651828b-124b-4b89-9a5f-0342e0e84fb4",
+                            Id = "43614cfd-e6ba-43d8-886b-85fd4be779d8",
                             ConcurrencyStamp = "3",
                             Name = "User",
                             NormalizedName = "USER"
@@ -191,17 +192,17 @@ namespace BlogApp.Migrations.ApplicationDb
                     b.HasData(
                         new
                         {
-                            Id = "162dcf04-2ae1-4e48-8d8a-54a67f46e605",
+                            Id = "40da5fe7-da5d-4457-a00c-379b4a16e489",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a70cf57c-12fd-4aef-89cc-0bcaf93d406a",
+                            ConcurrencyStamp = "a8ad7f00-792b-4dd0-aaa5-35be4da1fe9f",
                             Email = "superadmin@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = true,
                             NormalizedEmail = "SUPERADMIN@GMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEI0mlDI14yUjH+goUpX6yHasY985H+V1bjzM2wEzt8fcKEINGiEjcVarBsG/26qvkQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECidK2zrdgQiQ9Q8ZmepMpb5EvhyOgxS5GRhPb+WnVkXWb8q+wuDQIMyYavReH1mUQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c562018b-8302-453f-a42b-105c2d354a55",
+                            SecurityStamp = "f5bb9e9e-f433-4b2d-ac65-76006c8c3e18",
                             TwoFactorEnabled = false,
                             UserName = "SuperAdmin"
                         });
@@ -271,8 +272,8 @@ namespace BlogApp.Migrations.ApplicationDb
                     b.HasData(
                         new
                         {
-                            UserId = "162dcf04-2ae1-4e48-8d8a-54a67f46e605",
-                            RoleId = "a8f92217-3751-4717-8c7c-8837b0453873"
+                            UserId = "40da5fe7-da5d-4457-a00c-379b4a16e489",
+                            RoleId = "9bc56286-96db-4290-a73b-757546808476"
                         });
                 });
 

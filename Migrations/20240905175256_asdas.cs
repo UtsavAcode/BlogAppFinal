@@ -4,9 +4,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BlogApp.Migrations.ApplicationDb
+namespace BlogApp.Migrations
 {
-    public partial class news : Migration
+    public partial class asdas : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -57,7 +57,8 @@ namespace BlogApp.Migrations.ApplicationDb
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false)
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    RegisteredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -175,20 +176,20 @@ namespace BlogApp.Migrations.ApplicationDb
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2651828b-124b-4b89-9a5f-0342e0e84fb4", "3", "User", "USER" },
-                    { "7a4f6ba9-69b3-40b4-93e2-34de5d89d241", "2", "Admin", "ADMIN" },
-                    { "a8f92217-3751-4717-8c7c-8837b0453873", "1", "SuperAdmin", "SUPERADMIN" }
+                    { "1c8065c5-4575-4c81-b3d4-63f662839245", "3", "User", "USER" },
+                    { "bee47303-ee29-4dde-b651-cd05c9e3fe5e", "2", "Admin", "ADMIN" },
+                    { "cf66d0f8-d197-4009-9b27-c1821806372f", "1", "SuperAdmin", "SUPERADMIN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "162dcf04-2ae1-4e48-8d8a-54a67f46e605", 0, "a70cf57c-12fd-4aef-89cc-0bcaf93d406a", "superadmin@gmail.com", false, true, null, "SUPERADMIN@GMAIL.COM", "SUPERADMIN", "AQAAAAEAACcQAAAAEI0mlDI14yUjH+goUpX6yHasY985H+V1bjzM2wEzt8fcKEINGiEjcVarBsG/26qvkQ==", null, false, "c562018b-8302-453f-a42b-105c2d354a55", false, "SuperAdmin" });
+                values: new object[] { "f418ff2d-44ba-443b-a26a-e9a1087d26f8", 0, "63106037-9803-46f9-bbf1-cd5266e10af8", "superadmin@gmail.com", false, true, null, "SUPERADMIN@GMAIL.COM", "SUPERADMIN", "AQAAAAEAACcQAAAAELGdotJ8Y0C3lkUvcVldO8oNKkuLwvUyTnLgwcGDW26oXh9m4bECCtX2W7zr367etA==", null, false, "4701a406-4118-40fd-9258-f14c4c61c505", false, "SuperAdmin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "a8f92217-3751-4717-8c7c-8837b0453873", "162dcf04-2ae1-4e48-8d8a-54a67f46e605" });
+                values: new object[] { "cf66d0f8-d197-4009-9b27-c1821806372f", "f418ff2d-44ba-443b-a26a-e9a1087d26f8" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
