@@ -20,5 +20,11 @@ namespace BlogApp.Model.Dto
         [Required]
         [StringLength(50, MinimumLength = 5)]
         public string ConfirmPassword { get; set; }
+
+
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int Day { get; set; }
+        public int RegistrationCount { get; set; }
     }
 }

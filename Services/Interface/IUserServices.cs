@@ -13,7 +13,8 @@ namespace BlogApp.Services.Interface
         Task<UserManagerResponse> UpdateUserAsync(UpdateDto model);
         Task<UserManagerResponse> DeleteUserAsync(string email);
 
-        Task<UserStatsDto> GetUserRegistrationStatsAsync();
+        Task<List<UserStatsDto>> GetMonthlyRegistrationsAsync();
         Task<UserManagerResponse> CreateAdminAsync(AdminDto model);
+       
     }
 }

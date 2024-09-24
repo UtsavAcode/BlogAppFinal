@@ -12,5 +12,35 @@ namespace BlogApp.Data
 
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<BlogLike> Likes { get; set; }
+        public DbSet<BlogComment> Comments { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure relationships for Likes
+            modelBuilder.Entity<BlogLike>()
+               .HasKey(l => new { l.BlogPostId, l.UserId });
+
+            modelBuilder.Entity<BlogComment>(entity =>
+            {
+                entity.HasKey(bc => bc.Id); // Primary key for BlogComment
+
+                // Configure one-to-many relationship with BlogPost
+                entity.HasOne(bc => bc.BlogPost)
+                      .WithMany(bp => bp.Comments)
+                      .HasForeignKey(bc => bc.BlogPostId);
+
+                // Ensure the Content field is required with a maximum length
+                entity.Property(bc => bc.Content)
+                      .IsRequired()
+                      .HasMaxLength(1000);
+
+                // UserId will now be a string and not a foreign key
+                entity.Property(bc => bc.UserId)
+                      .IsRequired(); // Ensure UserId is required
+            });
+        
+    }
     }
 }

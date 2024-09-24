@@ -1,9 +1,11 @@
 ﻿using BlogApp.Model.Domain;
 using BlogApp.Model.Dto;
+using BlogApp.Services.Implementation;
 using BlogApp.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogApp.Controllers
 {
@@ -18,6 +20,8 @@ namespace BlogApp.Controllers
         {
             _userService = userService;
         }
+
+     
 
 
         [HttpPost]
@@ -89,6 +93,19 @@ namespace BlogApp.Controllers
             return Ok(users);
         }
 
+       
+
+            // Endpoint to fetch total number of registered users per month
+            [HttpGet("registrations/monthly")]
+            public async Task<IActionResult> GetMonthlyRegistrations()
+            {
+                List<UserStatsDto> monthlyRegistrations = await _userService.GetMonthlyRegistrationsAsync();
+                return Ok(monthlyRegistrations);
+            }
+        
+
+
+
         [HttpPut]
         [Route("Update")]
 
@@ -97,7 +114,7 @@ namespace BlogApp.Controllers
             if(model == null)
             {
                 return BadRequest("Update model is null");
-            }
+            }   
 
             var response = await _userService.UpdateUserAsync(model);
 

@@ -2,8 +2,8 @@
 {
     public class UserStatsDto
     {
-        public int WeeklyCount { get; set; }
-        public int MonthlyCount { get; set; }
-        public int YearlyCount { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int RegistrationCount { get; set; }
     }
 }

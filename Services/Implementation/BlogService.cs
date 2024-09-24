@@ -39,7 +39,7 @@ namespace BlogApp.Services.Implementation
             try
             {
                 string imagePath = null;
-                if(blogPost.Image != null)
+                if (blogPost.Image != null)
                 {
                     imagePath = await _imageService.UploadImageAsync(blogPost.Image);
                 }
@@ -90,7 +90,7 @@ namespace BlogApp.Services.Implementation
 
         }
 
-        
+
 
 
         public async Task<BlogManagerResponse> DeleteAsync(int id)
@@ -98,7 +98,7 @@ namespace BlogApp.Services.Implementation
             var post = await _context.BlogPosts.FindAsync(id);
             if (post != null)
             {
-                if(!string.IsNullOrEmpty(post.FeaturedImagePath))
+                if (!string.IsNullOrEmpty(post.FeaturedImagePath))
                 {
                     await _imageService.DeleteImageAsync(post.FeaturedImagePath);
                 }
@@ -126,11 +126,12 @@ namespace BlogApp.Services.Implementation
           .ToListAsync();
         }
 
-        public async Task<BlogPost?> GetAsync(int id) { 
-         return await _context.BlogPosts
-        .Include(bp => bp.Tags) // Ensure tags are included
-        .FirstOrDefaultAsync(bp => bp.Id == id);
-    }
+        public async Task<BlogPost?> GetAsync(int id)
+        {
+            return await _context.BlogPosts
+           .Include(bp => bp.Tags) // Ensure tags are included
+           .FirstOrDefaultAsync(bp => bp.Id == id);
+        }
 
         public async Task<BlogManagerResponse> UpdateAsync(UpdateBlogPostDto blogPost)
         {
@@ -213,6 +214,129 @@ namespace BlogApp.Services.Implementation
                 Message = "Image updated successfully",
                 IsSuccess = true,
             };
+        }
+
+        public async Task<bool> AddLikeAsync(int blogPostId, string userId)
+        {
+            var existingLike = await _context.Likes
+                .FirstOrDefaultAsync(l => l.BlogPostId == blogPostId && l.UserId == userId);
+
+            if (existingLike != null)
+            {
+                // Log that the user has already liked this blog post
+                Console.WriteLine($"User {userId} already liked blog post {blogPostId}");
+                return false; // User has already liked this blog post
+            }
+
+            var like = new BlogLike
+            {
+                BlogPostId = blogPostId,
+                UserId = userId
+            };
+
+            _context.Likes.Add(like);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
+        public async Task<int> GetLikesCountAsync(int blogPostId)
+        {
+            return await _context.Likes.CountAsync(l => l.BlogPostId == blogPostId);
+        }
+
+        
+
+       
+
+        public async Task<bool> CheckIfUserLiked(int blogPostId, string userId)
+        {
+            // No need to parse if userId is already a string
+            return await _context.Likes
+                .AnyAsync(l => l.BlogPostId == blogPostId && l.UserId == userId);
+        }
+
+        public async Task<bool> RemoveLike(int blogPostId, string userId)
+        {
+            var blogPost = await _context.BlogPosts.FindAsync(blogPostId);
+            if (blogPost == null)
+            {
+                return false; // Blog post not found
+            }
+
+            var like = await _context.Likes.FirstOrDefaultAsync(l => l.BlogPostId == blogPostId && l.UserId == userId);
+            if (like != null)
+            {
+                _context.Likes.Remove(like);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false; // Like not found
+        }
+
+
+        public async Task<BlogComment> AddCommentAsync(int blogPostId, string userId,string UserName, AddCommentDto addCommentDto)
+        {
+            var comment = new BlogComment
+            {
+                Content = addCommentDto.Content,
+                CreatedAt = DateTime.UtcNow,
+                BlogPostId = blogPostId,
+                UserId = userId,
+                UserName = UserName,
+            };
+
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return comment;
+        }
+
+        // Get comments by blog post ID
+        public async Task<List<BlogComment>> GetCommentsByBlogPostIdAsync(int blogPostId)
+        {
+            return await _context.Comments
+                .Where(c => c.BlogPostId == blogPostId)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        // Update an existing comment
+        public async Task<BlogComment> UpdateCommentAsync(int commentId, string newContent, string userId)
+        {
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+
+            if (comment == null)
+            {
+                return null; // Handle error case in your controller
+            }
+
+            comment.Content = newContent;
+            await _context.SaveChangesAsync();
+
+            return comment;
+        }
+
+        // Delete a comment
+        public async Task<bool> DeleteCommentAsync(int commentId, string userId)
+        {
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+
+            if (comment == null)
+            {
+                return false; // Handle error case in your controller
+            }
+
+            _context.Comments.Remove(comment);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<IEnumerable<BlogComment>> GetCommentsAsync()
+        {
+            return await _context.Comments.ToListAsync();
         }
     }
 }

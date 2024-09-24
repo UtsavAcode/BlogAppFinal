@@ -106,24 +106,23 @@ namespace BlogApp.Services.Implementation
             return await _userManager.FindByEmailAsync(email);
         }
 
-        public async Task<UserStatsDto> GetUserRegistrationStatsAsync()
+        public async Task<List<UserStatsDto>> GetMonthlyRegistrationsAsync()
         {
-            var today = DateTime.UtcNow;
-            var weekAgo = today.AddDays(-7);
-            var monthAgo = today.AddMonths(-1);
-            var yearAgo = today.AddYears(-1);
+            var monthlyRegistrations = await _context.Users
+                .GroupBy(u => new { u.RegisteredAt.Year, u.RegisteredAt.Month })
+                .Select(g => new UserStatsDto
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    RegistrationCount = g.Count()
+                })
+                .OrderBy(r => r.Year)
+                .ThenBy(r => r.Month)
+                .ToListAsync();
 
-            var weeklyCount = await _context.Users.CountAsync(u => u.RegisteredAt >= weekAgo);
-            var monthlyCount = await _context.Users.CountAsync(u => u.RegisteredAt >= monthAgo);
-            var yearlyCount = await _context.Users.CountAsync(u => u.RegisteredAt >= yearAgo);
-
-            return new UserStatsDto
-            {
-                WeeklyCount = weeklyCount,
-                MonthlyCount= monthlyCount,
-                YearlyCount = yearlyCount
-            };
+            return monthlyRegistrations;
         }
+
 
         public async Task<UserManagerResponse> LoginUserAsync(LoginDto model)
         {
