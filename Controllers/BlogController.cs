@@ -255,9 +255,9 @@ namespace BlogApp.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userName = User.FindFirstValue(ClaimTypes.Name);
+         
 
-            var comment = await _blogServices.AddCommentAsync(blogId, userId,userName, commentDto);
+            var comment = await _blogServices.AddCommentAsync(blogId, userId, commentDto);
 
             if (comment != null)
             {
@@ -273,34 +273,32 @@ namespace BlogApp.Controllers
             return Ok(comments);
         }
 
-        [HttpPut("{commentId}")]
-        public async Task<IActionResult> UpdateComment(int commentId, [FromBody] string newContent)
+        [HttpPut]
+        [Route("updateComment")]
+        public async Task<IActionResult> UpdateComment(UpdateCommentDto comment)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var updatedComment = await _blogServices.UpdateCommentAsync(commentId, newContent, userId);
-
-            if (updatedComment != null)
+           if(comment == null)
             {
-                return Ok(new { isSuccess = true, comment = updatedComment });
+                return BadRequest();
             }
-
-            return BadRequest("Failed to update comment.");
+           var response = await _blogServices.UpdateCommentAsync(comment);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
         }
 
-        [HttpDelete("{commentId}")]
+        [HttpDelete]
+        [Route("Delete/{id}")]
         public async Task<IActionResult> DeleteComment(int commentId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var success = await _blogServices.DeleteCommentAsync(commentId, userId);
-
-            if (success)
+           var response =await _blogServices.DeleteCommentAsync(commentId);
+            if (response.IsSuccess)
             {
-                return Ok(new { isSuccess = true });
+                return Ok(response);
             }
-
-            return BadRequest("Failed to delete comment.");
+            return BadRequest(response);    
         }
 
         [HttpGet]

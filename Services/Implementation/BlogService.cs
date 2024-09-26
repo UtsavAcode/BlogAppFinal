@@ -276,7 +276,7 @@ namespace BlogApp.Services.Implementation
         }
 
 
-        public async Task<BlogComment> AddCommentAsync(int blogPostId, string userId,string UserName, AddCommentDto addCommentDto)
+        public async Task<BlogComment> AddCommentAsync(int blogPostId, string userId, AddCommentDto addCommentDto)
         {
             var comment = new BlogComment
             {
@@ -284,7 +284,7 @@ namespace BlogApp.Services.Implementation
                 CreatedAt = DateTime.UtcNow,
                 BlogPostId = blogPostId,
                 UserId = userId,
-                UserName = UserName,
+                UserName = addCommentDto.UserName,
             };
 
             _context.Comments.Add(comment);
@@ -303,35 +303,47 @@ namespace BlogApp.Services.Implementation
         }
 
         // Update an existing comment
-        public async Task<BlogComment> UpdateCommentAsync(int commentId, string newContent, string userId)
+        public async Task<BlogManagerResponse> UpdateCommentAsync(UpdateCommentDto comment)
         {
-            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+            var existingComment = await _context.Comments.FindAsync(comment.Id);
 
-            if (comment == null)
+            if (existingComment != null)
             {
-                return null; // Handle error case in your controller
+                existingComment.Content = comment.Content;
+                await _context.SaveChangesAsync();
+                return new BlogManagerResponse
+                {
+                    Message = "Comment updated",
+                    IsSuccess = true,
+                };
             }
-
-            comment.Content = newContent;
-            await _context.SaveChangesAsync();
-
-            return comment;
+            return new BlogManagerResponse
+            {
+                Message = "Comment Update failed",
+                IsSuccess = false,
+            };
         }
 
         // Delete a comment
-        public async Task<bool> DeleteCommentAsync(int commentId, string userId)
+        public async Task<BlogManagerResponse> DeleteCommentAsync(int commentId)
         {
-            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+            var comment = await _context.Comments.FindAsync(commentId);
 
-            if (comment == null)
-            {
-                return false; // Handle error case in your controller
+            if (comment != null) { 
+            
+                _context.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+                return new BlogManagerResponse
+                {
+                    Message = "Comment Deleted",
+                    IsSuccess = true,
+                };
             }
 
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
+            return new BlogManagerResponse { IsSuccess=false };
 
-            return true;
+
+
         }
 
         public async Task<IEnumerable<BlogComment>> GetCommentsAsync()

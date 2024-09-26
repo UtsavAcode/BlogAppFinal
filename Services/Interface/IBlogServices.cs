@@ -16,12 +16,12 @@ namespace BlogApp.Services.Interface
         Task<BlogManagerResponse> UpdateImageAsync(IFormFile image, int blogPostId);
         Task<bool> AddLikeAsync(int blogPostId, string userId);
 
-        Task<BlogComment> AddCommentAsync(int blogPostId, string userId,string UserName, AddCommentDto addCommentDto);
+        Task<BlogComment> AddCommentAsync(int blogPostId, string userId, AddCommentDto addCommentDto);
         Task<List<BlogComment>> GetCommentsByBlogPostIdAsync(int blogPostId);
 
         Task<IEnumerable<BlogComment>> GetCommentsAsync();
-        Task<bool> DeleteCommentAsync(int commentId, string userId);
-        Task<BlogComment> UpdateCommentAsync(int commentId, string newContent, string userId);
+        Task<BlogManagerResponse> DeleteCommentAsync(int commentId);
+        Task<BlogManagerResponse> UpdateCommentAsync(UpdateCommentDto comment);
         Task<int> GetLikesCountAsync(int blogPostId);
         Task<bool> RemoveLike(int blogPostId, string userId);
         Task<bool> CheckIfUserLiked(int blogPostId, string userId);
