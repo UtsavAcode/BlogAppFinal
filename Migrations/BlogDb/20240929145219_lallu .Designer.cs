@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlogApp.Migrations.BlogDb
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240922031435_asdada")]
-    partial class asdada
+    [Migration("20240929145219_lallu ")]
+    partial class lallu
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,10 @@ namespace BlogApp.Migrations.BlogDb
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 

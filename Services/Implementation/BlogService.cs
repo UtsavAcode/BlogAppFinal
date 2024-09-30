@@ -350,5 +350,38 @@ namespace BlogApp.Services.Implementation
         {
             return await _context.Comments.ToListAsync();
         }
+
+        public async Task<BlogManagerResponse> AddViewAsync(int blogPostId, string userId, string ipAddress, string userAgent)
+        {
+            var blogView = new BlogView
+            {
+                BlogPostId = blogPostId,
+                UserId = userId,
+                IpAddress = ipAddress,
+                UserAgent = userAgent,
+                ViewAt = DateTime.UtcNow // Set the view time
+            };
+
+            // Check if the view already exists (optional logic)
+            var existingView = await _context.BlogViews
+                .Where(v => v.BlogPostId == blogPostId && v.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (existingView == null)
+            {
+                await _context.BlogViews.AddAsync(blogView);
+                await _context.SaveChangesAsync();
+                return new BlogManagerResponse { IsSuccess = true, Message = "View registered successfully." };
+            }
+
+            return new BlogManagerResponse { IsSuccess = false, Message = "View already exists." };
+        }
+
+
+
+        public async Task<int> GetViewsAsync(int blogPostId)
+        {
+            return await _context.BlogViews.CountAsync(v => v.BlogPostId == blogPostId);
+        }
     }
 }

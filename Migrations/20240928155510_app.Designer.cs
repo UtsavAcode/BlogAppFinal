@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlogApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240905175635_as")]
-    partial class @as
+    [Migration("20240928155510_app")]
+    partial class app
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -79,21 +79,21 @@ namespace BlogApp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9bc56286-96db-4290-a73b-757546808476",
+                            Id = "719e16f7-161e-4300-b7be-afaad34b50be",
                             ConcurrencyStamp = "1",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "d0f32048-20a0-473c-8e4a-c9535eb5f6a5",
+                            Id = "00a9a9a8-6429-406e-a1ca-56b72c371351",
                             ConcurrencyStamp = "2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "43614cfd-e6ba-43d8-886b-85fd4be779d8",
+                            Id = "afec90b1-309b-4d3f-b5f2-f83174f03279",
                             ConcurrencyStamp = "3",
                             Name = "User",
                             NormalizedName = "USER"
@@ -194,17 +194,17 @@ namespace BlogApp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "40da5fe7-da5d-4457-a00c-379b4a16e489",
+                            Id = "a5a36bff-804c-49f4-be2d-51396ec873a4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a8ad7f00-792b-4dd0-aaa5-35be4da1fe9f",
+                            ConcurrencyStamp = "0283c6db-9f7c-461e-9e7c-fbb3cb803375",
                             Email = "superadmin@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = true,
                             NormalizedEmail = "SUPERADMIN@GMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAECidK2zrdgQiQ9Q8ZmepMpb5EvhyOgxS5GRhPb+WnVkXWb8q+wuDQIMyYavReH1mUQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM/qc/aEAP9GMUKUTpsHwL0VWUZ9Z3Mww97dp/U7qyRu47X8AbecrnGNjHwBKyoIzg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f5bb9e9e-f433-4b2d-ac65-76006c8c3e18",
+                            SecurityStamp = "01f16364-985b-464c-ad03-3330ca308338",
                             TwoFactorEnabled = false,
                             UserName = "SuperAdmin"
                         });
@@ -274,8 +274,8 @@ namespace BlogApp.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "40da5fe7-da5d-4457-a00c-379b4a16e489",
-                            RoleId = "9bc56286-96db-4290-a73b-757546808476"
+                            UserId = "a5a36bff-804c-49f4-be2d-51396ec873a4",
+                            RoleId = "719e16f7-161e-4300-b7be-afaad34b50be"
                         });
                 });
 

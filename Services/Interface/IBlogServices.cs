@@ -6,10 +6,10 @@ namespace BlogApp.Services.Interface
 {
     public interface IBlogServices
     {
-       Task<IEnumerable<BlogPost>> GetAllAsync();
-      
+        Task<IEnumerable<BlogPost>> GetAllAsync();
+
         Task<BlogPost?> GetAsync(int id);
-     //  Task<BlogPost?> GetByUrlHandleAsync(string urlHandle);
+        //  Task<BlogPost?> GetByUrlHandleAsync(string urlHandle);
         Task<BlogManagerResponse> AddAsync(BlogPostDto blogPost);
         Task<BlogManagerResponse> UpdateAsync(UpdateBlogPostDto blogPost);
         Task<BlogManagerResponse> DeleteAsync(int id);
@@ -25,5 +25,10 @@ namespace BlogApp.Services.Interface
         Task<int> GetLikesCountAsync(int blogPostId);
         Task<bool> RemoveLike(int blogPostId, string userId);
         Task<bool> CheckIfUserLiked(int blogPostId, string userId);
+
+        //Views Section 
+
+        Task<BlogManagerResponse> AddViewAsync(int blogPostId, string userId, string ipAddress, string userAgent);
+        Task<int> GetViewsAsync(int blogPostId);
     }
 }

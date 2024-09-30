@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlogApp.Migrations.BlogDb
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240924162303_hbd")]
-    partial class hbd
+    [Migration("20240930100132_BlogView")]
+    partial class BlogView
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -120,6 +120,39 @@ namespace BlogApp.Migrations.BlogDb
                     b.ToTable("BlogPosts");
                 });
 
+            modelBuilder.Entity("BlogApp.Model.Domain.BlogView", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlogPostId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ViewAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogPostId");
+
+                    b.ToTable("BlogView");
+                });
+
             modelBuilder.Entity("BlogApp.Model.Domain.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -174,6 +207,17 @@ namespace BlogApp.Migrations.BlogDb
                     b.Navigation("BlogPost");
                 });
 
+            modelBuilder.Entity("BlogApp.Model.Domain.BlogView", b =>
+                {
+                    b.HasOne("BlogApp.Model.Domain.BlogPost", "BlogPost")
+                        .WithMany("BlogView")
+                        .HasForeignKey("BlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlogPost");
+                });
+
             modelBuilder.Entity("BlogPostTag", b =>
                 {
                     b.HasOne("BlogApp.Model.Domain.BlogPost", null)
@@ -191,6 +235,8 @@ namespace BlogApp.Migrations.BlogDb
 
             modelBuilder.Entity("BlogApp.Model.Domain.BlogPost", b =>
                 {
+                    b.Navigation("BlogView");
+
                     b.Navigation("Comments");
 
                     b.Navigation("Likes");

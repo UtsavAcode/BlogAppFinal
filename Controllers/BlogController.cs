@@ -290,7 +290,7 @@ namespace BlogApp.Controllers
         }
 
         [HttpDelete]
-        [Route("Delete/{id}")]
+        [Route("Delete/{commentId}")]
         public async Task<IActionResult> DeleteComment(int commentId)
         {
            var response =await _blogServices.DeleteCommentAsync(commentId);
@@ -312,6 +312,35 @@ namespace BlogApp.Controllers
             }
             return Ok(comments);
         }
+
+        [HttpPost("{blogPostId}/registerView")]
+        public async Task<IActionResult> RegisterView(int blogPostId)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userAgent = Request.Headers["User-Agent"].ToString();
+
+                var response = await _blogServices.AddViewAsync(blogPostId, userId, ipAddress, userAgent);
+
+                if (response.IsSuccess)
+                {
+                    return Ok(new { isSuccess = true, message = response.Message });
+                }
+
+                return BadRequest(new { isSuccess = false, message = response.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+
+
+
+
 
 
     }

@@ -77,21 +77,21 @@ namespace BlogApp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c7fb24df-7316-4a20-9627-c172465d1919",
+                            Id = "719e16f7-161e-4300-b7be-afaad34b50be",
                             ConcurrencyStamp = "1",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "bce4737d-d510-48c6-8258-a1b683789b8f",
+                            Id = "00a9a9a8-6429-406e-a1ca-56b72c371351",
                             ConcurrencyStamp = "2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "45229544-af1d-4470-9563-ac9519478351",
+                            Id = "afec90b1-309b-4d3f-b5f2-f83174f03279",
                             ConcurrencyStamp = "3",
                             Name = "User",
                             NormalizedName = "USER"
@@ -192,17 +192,17 @@ namespace BlogApp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ba0ffca9-244b-4c87-9d22-40ac66079310",
+                            Id = "a5a36bff-804c-49f4-be2d-51396ec873a4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dad166f2-5b1a-4339-a9a0-f49e7c946ff9",
+                            ConcurrencyStamp = "0283c6db-9f7c-461e-9e7c-fbb3cb803375",
                             Email = "superadmin@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = true,
                             NormalizedEmail = "SUPERADMIN@GMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEN12+rYw5CjglYdfX0bMX8aSZx7f+z1jIqV/LrSAa5CYf7gmrlYZ2epgcs4IFou3/w==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM/qc/aEAP9GMUKUTpsHwL0VWUZ9Z3Mww97dp/U7qyRu47X8AbecrnGNjHwBKyoIzg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d9ce2588-587f-4d21-b005-24687e81cf88",
+                            SecurityStamp = "01f16364-985b-464c-ad03-3330ca308338",
                             TwoFactorEnabled = false,
                             UserName = "SuperAdmin"
                         });
@@ -272,8 +272,8 @@ namespace BlogApp.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "ba0ffca9-244b-4c87-9d22-40ac66079310",
-                            RoleId = "c7fb24df-7316-4a20-9627-c172465d1919"
+                            UserId = "a5a36bff-804c-49f4-be2d-51396ec873a4",
+                            RoleId = "719e16f7-161e-4300-b7be-afaad34b50be"
                         });
                 });
 

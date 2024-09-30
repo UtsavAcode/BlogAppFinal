@@ -4,7 +4,7 @@
 
 namespace BlogApp.Migrations.BlogDb
 {
-    public partial class dfsfsfs : Migration
+    public partial class jbnbmbjh : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
