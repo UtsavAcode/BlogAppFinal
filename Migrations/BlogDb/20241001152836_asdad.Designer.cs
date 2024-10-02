@@ -3,6 +3,7 @@ using System;
 using BlogApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlogApp.Migrations.BlogDb
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241001152836_asdad")]
+    partial class asdad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,9 +93,6 @@ namespace BlogApp.Migrations.BlogDb
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("CommentsCount")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
@@ -108,9 +107,6 @@ namespace BlogApp.Migrations.BlogDb
                     b.Property<int>("LikeCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("LikesCount")
-                        .HasColumnType("integer");
-
                     b.Property<string>("MetaDescription")
                         .IsRequired()
                         .HasColumnType("text");
@@ -118,9 +114,6 @@ namespace BlogApp.Migrations.BlogDb
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("ViewsCount")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

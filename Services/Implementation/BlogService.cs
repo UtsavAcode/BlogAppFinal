@@ -122,7 +122,7 @@ namespace BlogApp.Services.Implementation
         public async Task<IEnumerable<BlogPost>> GetAllAsync()
         {
             return await _context.BlogPosts
-          .Include(bp => bp.Tags) // Ensure tags are included
+          .Include(bp => bp.Tags) // Ensure tags are includeda
           .ToListAsync();
         }
 
@@ -245,9 +245,9 @@ namespace BlogApp.Services.Implementation
             return await _context.Likes.CountAsync(l => l.BlogPostId == blogPostId);
         }
 
-        
 
-       
+
+
 
         public async Task<bool> CheckIfUserLiked(int blogPostId, string userId)
         {
@@ -329,8 +329,9 @@ namespace BlogApp.Services.Implementation
         {
             var comment = await _context.Comments.FindAsync(commentId);
 
-            if (comment != null) { 
-            
+            if (comment != null)
+            {
+
                 _context.Comments.Remove(comment);
                 await _context.SaveChangesAsync();
                 return new BlogManagerResponse
@@ -340,7 +341,7 @@ namespace BlogApp.Services.Implementation
                 };
             }
 
-            return new BlogManagerResponse { IsSuccess=false };
+            return new BlogManagerResponse { IsSuccess = false };
 
 
 
@@ -362,19 +363,15 @@ namespace BlogApp.Services.Implementation
                 ViewAt = DateTime.UtcNow // Set the view time
             };
 
-            // Check if the view already exists (optional logic)
-            var existingView = await _context.BlogViews
-                .Where(v => v.BlogPostId == blogPostId && v.UserId == userId)
-                .FirstOrDefaultAsync();
 
-            if (existingView == null)
-            {
-                await _context.BlogViews.AddAsync(blogView);
-                await _context.SaveChangesAsync();
-                return new BlogManagerResponse { IsSuccess = true, Message = "View registered successfully." };
-            }
 
-            return new BlogManagerResponse { IsSuccess = false, Message = "View already exists." };
+
+            await _context.BlogViews.AddAsync(blogView);
+            await _context.SaveChangesAsync();
+            return new BlogManagerResponse { IsSuccess = true, Message = "View registered successfully." };
+
+
+
         }
 
 

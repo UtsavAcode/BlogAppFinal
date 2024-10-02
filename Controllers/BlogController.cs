@@ -313,6 +313,18 @@ namespace BlogApp.Controllers
             return Ok(comments);
         }
 
+        [HttpGet]
+        [Route("GetViews/{blogPostId}")]
+        public async Task<IActionResult> GetViews(int blogPostId) {
+            var views = await _blogServices.GetViewsAsync(blogPostId);
+            if (views == null)
+            {
+                return BadRequest("No views");
+            }
+            return Ok(views);
+        }
+
+
         [HttpPost("{blogPostId}/registerView")]
         public async Task<IActionResult> RegisterView(int blogPostId)
         {

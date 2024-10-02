@@ -27,6 +27,10 @@ namespace BlogApp.Model.Domain
         public ICollection<BlogLike> Likes { get; set; }
         public ICollection<BlogComment> Comments { get; set; } = new List<BlogComment>();
         public ICollection<BlogView> BlogView { get; set; } = new List<BlogView>();
+
+        public int LikesCount { get; set; }
+        public int CommentsCount { get; set; }
+        public int ViewsCount { get; set; }
     }
 
 
