@@ -16,9 +16,11 @@ namespace BlogApp.Model.Dto
         public IFormFile Image { get; set; }
         public string? Tags { get; set; }
 
-       // public bool Visible { get; set; }
+        // public bool Visible { get; set; }
         //  public string? Slug { get; set; }
         //public string Keywords { get; set; }
+
+        public int UniqueViewCount { get; set; }
 
 
 

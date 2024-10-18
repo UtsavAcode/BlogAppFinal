@@ -34,13 +34,13 @@ namespace BlogApp.Controllers
                 return BadRequest(ModelState);
             }
 
-          
+
 
             try
             {
-               
-                    List<int> tagIds = model.TagIds ?? new List<int>();
-                
+
+                List<int> tagIds = model.TagIds ?? new List<int>();
+
                 var postResponse = await _blogServices.AddAsync(model);
 
                 if (postResponse.IsSuccess)
@@ -64,10 +64,10 @@ namespace BlogApp.Controllers
         [Route("GetAllBlog")]
         public async Task<IActionResult> GetAllBlog()
         {
-            var blogs =  await _blogServices.GetAllAsync();
-            if(blogs != null)
+            var blogs = await _blogServices.GetAllAsync();
+            if (blogs != null)
             {
-                return Ok(blogs);   
+                return Ok(blogs);
             }
 
             return BadRequest("No blogs found");
@@ -78,9 +78,9 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> GetBlog(int id)
         {
             var blog = await _blogServices.GetAsync(id);
-            if(blog != null)    
+            if (blog != null)
             {
-                return Ok(blog);    
+                return Ok(blog);
             }
             return BadRequest("No Blog");
 
@@ -91,7 +91,7 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> DeleteBlog(int id)
         {
             var response = await _blogServices.DeleteAsync(id);
-            if(response.IsSuccess)
+            if (response.IsSuccess)
             {
                 return Ok(response);
             }
@@ -99,7 +99,7 @@ namespace BlogApp.Controllers
         }
 
 
-        [HttpPost]      
+        [HttpPost]
         [Route("UploadImage")]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile image)
         {
@@ -119,31 +119,31 @@ namespace BlogApp.Controllers
         }
 
 
-            [HttpPut]
-            [Route("UpdateBlogPost")]
-            public async Task<IActionResult> UpdateBlogPost([FromForm] UpdateBlogPostDto model)
+        [HttpPut]
+        [Route("UpdateBlogPost")]
+        public async Task<IActionResult> UpdateBlogPost([FromForm] UpdateBlogPostDto model)
+        {
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                try
-                {
-                    var response = await _blogServices.UpdateAsync(model);
-
-                    if (response.IsSuccess)
-                    {
-                        return Ok(response);
-                    }
-
-                    return BadRequest(response);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-                }
+                return BadRequest(ModelState);
             }
+
+            try
+            {
+                var response = await _blogServices.UpdateAsync(model);
+
+                if (response.IsSuccess)
+                {
+                    return Ok(response);
+                }
+
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
 
 
@@ -152,13 +152,13 @@ namespace BlogApp.Controllers
         [Route("UpdateBlogImage/{id}")]
         public async Task<IActionResult> UpdateBlogImage(int id, [FromForm] IFormFile image)
         {
-            if(image == null)
+            if (image == null)
             {
                 return BadRequest("No image file provided");
             }
 
             var response = await _blogServices.UpdateImageAsync(image, id);
-            if(response.IsSuccess)
+            if (response.IsSuccess)
             {
                 return Ok(response);
             }
@@ -216,10 +216,10 @@ namespace BlogApp.Controllers
         }
 
 
-      
 
 
-       
+
+
 
         [HttpDelete("{blogPostId}/like")]
         public async Task<IActionResult> RemoveLike(int blogPostId)
@@ -255,7 +255,7 @@ namespace BlogApp.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-         
+
 
             var comment = await _blogServices.AddCommentAsync(blogId, userId, commentDto);
 
@@ -268,7 +268,7 @@ namespace BlogApp.Controllers
         }
         [HttpGet("{id}/comments")]
         public async Task<IActionResult> GetComments(int blogId)
-        {   
+        {
             var comments = await _blogServices.GetCommentsByBlogPostIdAsync(blogId);
             return Ok(comments);
         }
@@ -277,11 +277,11 @@ namespace BlogApp.Controllers
         [Route("updateComment")]
         public async Task<IActionResult> UpdateComment(UpdateCommentDto comment)
         {
-           if(comment == null)
+            if (comment == null)
             {
                 return BadRequest();
             }
-           var response = await _blogServices.UpdateCommentAsync(comment);
+            var response = await _blogServices.UpdateCommentAsync(comment);
             if (response.IsSuccess)
             {
                 return Ok(response);
@@ -293,12 +293,12 @@ namespace BlogApp.Controllers
         [Route("Delete/{commentId}")]
         public async Task<IActionResult> DeleteComment(int commentId)
         {
-           var response =await _blogServices.DeleteCommentAsync(commentId);
+            var response = await _blogServices.DeleteCommentAsync(commentId);
             if (response.IsSuccess)
             {
                 return Ok(response);
             }
-            return BadRequest(response);    
+            return BadRequest(response);
         }
 
         [HttpGet]
@@ -306,7 +306,7 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> GetComments()
         {
             var comments = await _blogServices.GetCommentsAsync();
-            if(comments == null)
+            if (comments == null)
             {
                 return BadRequest("No comments");
             }
@@ -315,14 +315,18 @@ namespace BlogApp.Controllers
 
         [HttpGet]
         [Route("GetViews/{blogPostId}")]
-        public async Task<IActionResult> GetViews(int blogPostId) {
-            var views = await _blogServices.GetViewsAsync(blogPostId);
+        public async Task<IActionResult> GetViews(int blogPostId)
+        {
+            var views = await _blogServices.GetBlogViewDetailsAsync(blogPostId);
+
             if (views == null)
             {
                 return BadRequest("No views");
             }
+
             return Ok(views);
         }
+
 
 
         [HttpPost("{blogPostId}/registerView")]
@@ -351,8 +355,40 @@ namespace BlogApp.Controllers
 
 
 
+        [HttpGet]
+        [Route("GetAllViews")]
+        public async Task<ActionResult<IEnumerable<BlogView>>> GetAllViews([FromQuery] List<int> blogPostIds)
+        {
+            if (blogPostIds == null || !blogPostIds.Any())
+            {
+                return BadRequest("No blog post IDs provided.");
+            }
+
+            var views = await _blogServices.GetAllViewsAsync(blogPostIds);
+
+            if (views == null || !views.Any())
+            {
+                return NotFound("No views found for the provided blog post IDs.");
+            }
+
+            return Ok(views);
+        }
 
 
+
+
+
+        [HttpPost("Send")]
+        public async Task<IActionResult> Send([FromBody] ReadingDataDto readingData)
+        {
+            if (readingData == null)
+            {
+                return BadRequest("Reading data is required.");
+            }
+
+            await _blogServices.SaveReadingDataAsync(readingData);
+            return Ok(new { message = "Reading data saved successfully." });
+        }
 
 
     }

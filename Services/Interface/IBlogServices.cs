@@ -27,8 +27,10 @@ namespace BlogApp.Services.Interface
         Task<bool> CheckIfUserLiked(int blogPostId, string userId);
 
         //Views Section 
-
+        Task SaveReadingDataAsync(ReadingDataDto readingData);
         Task<BlogManagerResponse> AddViewAsync(int blogPostId, string userId, string ipAddress, string userAgent);
-        Task<int> GetViewsAsync(int blogPostId);
+        Task<BlogViewDetailDto> GetBlogViewDetailsAsync(int blogPostId);
+        Task<IEnumerable<BlogView>> GetAllViewsAsync(List<int> blogPostIds);
+        Task IncrementUniqueViewCountAsync(int blogPostId);
     }
 }

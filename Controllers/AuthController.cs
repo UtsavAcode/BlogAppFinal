@@ -93,7 +93,18 @@ namespace BlogApp.Controllers
             return Ok(users);
         }
 
-       
+        [HttpGet]
+        [Route("GetAllDetails")]
+        public async Task<IActionResult> GetAllDetailsAsync()
+        {
+            var details = await _userService.GetAllDetails();
+            if(details == null)
+            {
+                return NotFound(details);
+            }
+            return Ok(details);
+
+        }
 
             // Endpoint to fetch total number of registered users per month
             [HttpGet("registrations/monthly")]

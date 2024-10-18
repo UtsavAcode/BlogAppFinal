@@ -31,6 +31,8 @@ namespace BlogApp.Model.Domain
         public int LikesCount { get; set; }
         public int CommentsCount { get; set; }
         public int ViewsCount { get; set; }
+
+        public int UniqueViewCount { get; set; }
     }
 
 

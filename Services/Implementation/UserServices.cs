@@ -101,6 +101,11 @@ namespace BlogApp.Services.Implementation
             return await _userManager.Users.ToListAsync();
         }
 
+        public async Task<IEnumerable<User>> GetAllDetails()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
         public async Task<IdentityUser> GetUserAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
@@ -316,9 +321,6 @@ namespace BlogApp.Services.Implementation
             };
         }
 
-
-
-
-
+      
     }
 }

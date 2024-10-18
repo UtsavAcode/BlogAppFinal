@@ -354,31 +354,99 @@ namespace BlogApp.Services.Implementation
 
         public async Task<BlogManagerResponse> AddViewAsync(int blogPostId, string userId, string ipAddress, string userAgent)
         {
+            // Check for existing view by this user
+            var existingView = await _context.BlogViews
+                .FirstOrDefaultAsync(v => v.BlogPostId == blogPostId && v.UserId == userId);
+
             var blogView = new BlogView
             {
                 BlogPostId = blogPostId,
                 UserId = userId,
                 IpAddress = ipAddress,
                 UserAgent = userAgent,
-                ViewAt = DateTime.UtcNow // Set the view time
+                ViewAt = DateTime.UtcNow, // Set the view time
+               // Store scroll percentage
+            };
+
+            // Register the view
+            await _context.BlogViews.AddAsync(blogView);
+            await _context.SaveChangesAsync();
+
+            // If the user had no previous views, increment the unique views count
+            if (existingView == null)
+            {
+                await IncrementUniqueViewCountAsync(blogPostId);
+            }
+
+            return new BlogManagerResponse { IsSuccess = true, Message = "View registered successfully." };
+        }
+
+
+
+        public async Task IncrementUniqueViewCountAsync(int blogPostId)
+        {
+            var blogPost = await _context.BlogPosts.FindAsync(blogPostId);
+            if (blogPost != null)
+            {
+                blogPost.UniqueViewCount += 1; // Assuming you have a property to track unique views
+                _context.BlogPosts.Update(blogPost);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
+        public async Task<IEnumerable<BlogView>> GetAllViewsAsync(List<int> blogPostIds)
+        {
+            return await _context.BlogViews
+                .Where(view => blogPostIds.Contains(view.BlogPostId)) // Use Contains to filter by multiple IDs
+                .ToListAsync();
+        }
+
+
+
+
+        public async Task<BlogViewDetailDto> GetBlogViewDetailsAsync(int blogPostId)
+        {
+            // Get the total number of views for the blog post
+            var totalViews = await _context.BlogViews
+                                           .CountAsync(v => v.BlogPostId == blogPostId);
+
+            // Get the most recent view details
+            var latestView = await _context.BlogViews
+                                           .Where(v => v.BlogPostId == blogPostId)
+                                           .OrderByDescending(v => v.ViewAt) // Ensure the latest view is at the top
+                                           .FirstOrDefaultAsync();
+
+            // Return the DTO with the fetched data
+            return new BlogViewDetailDto
+            {
+                BlogPostId = blogPostId,
+                TotalViews = totalViews,
+                ViewAt = latestView?.ViewAt ?? DateTime.MinValue, // Handle cases where there may be no views
+                UserId = latestView?.UserId,                     // Fetch the UserId from the latest view
+                IpAddress = latestView?.IpAddress,               // Fetch the IP address
+                UserAgent = latestView?.UserAgent                // Fetch the UserAgent (browser details)
             };
 
 
 
-
-            await _context.BlogViews.AddAsync(blogView);
-            await _context.SaveChangesAsync();
-            return new BlogManagerResponse { IsSuccess = true, Message = "View registered successfully." };
-
-
-
         }
 
 
 
-        public async Task<int> GetViewsAsync(int blogPostId)
+        public async Task SaveReadingDataAsync(ReadingDataDto readingData)
         {
-            return await _context.BlogViews.CountAsync(v => v.BlogPostId == blogPostId);
+            var readingDataEntity = new ReadingDataEntity
+            {
+                BlogPostId = readingData.BlogPostId,
+                UserId = readingData.UserId,
+                ReadingTime = readingData.ReadingTime, // Convert TimeSpan to int (seconds)
+                ScrollPositions = readingData.ScrollPositions
+            };
+
+            _context.ReadingDataEntities.Add(readingDataEntity);
+            await _context.SaveChangesAsync();
         }
+        
     }
 }

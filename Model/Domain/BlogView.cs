@@ -11,5 +11,7 @@
         public string IpAddress { get; set; }
         
         public string UserAgent { get; set; }// This is the device name 
+
+        
     }
 }

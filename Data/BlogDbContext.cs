@@ -15,6 +15,8 @@
             public DbSet<BlogLike> Likes { get; set; }
             public DbSet<BlogComment> Comments { get; set; }
             public DbSet<BlogView> BlogViews { get; set; }
+
+            public DbSet<ReadingDataEntity> ReadingDataEntities { get; set; }
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                 base.OnModelCreating(modelBuilder);
