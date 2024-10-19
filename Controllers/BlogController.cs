@@ -374,7 +374,16 @@ namespace BlogApp.Controllers
             return Ok(views);
         }
 
-
+        [HttpGet("ReadingData/{blogPostId}")]
+        public async Task<IActionResult> GetReadingData(int blogPostId)
+        {
+            var data = await _blogServices.GetReadingDataAsync(blogPostId);
+            if (data != null)
+            {
+                return Ok(data);
+            }
+            else return BadRequest();
+        }
 
 
 
@@ -391,5 +400,22 @@ namespace BlogApp.Controllers
         }
 
 
+
+        [HttpGet("{blogPostId}/average")]
+        public async Task<IActionResult> GetAverageScrollPositionAndReadingTime(int blogPostId)
+        {
+            var result = await _blogServices.GetAverageScrollPositionAndReadingTimeAsync(blogPostId);
+
+            if (result.averageScrollPosition.HasValue || result.averageReadingTime.HasValue)
+            {
+                return Ok(new
+                {
+                    AverageScrollPosition = result.averageScrollPosition,
+                    AverageReadingTime = result.averageReadingTime
+                });
+            }
+
+            return NotFound("No data found for the specified blog post.");
+        }
     }
 }

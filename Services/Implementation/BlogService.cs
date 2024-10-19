@@ -447,6 +447,56 @@ namespace BlogApp.Services.Implementation
             _context.ReadingDataEntities.Add(readingDataEntity);
             await _context.SaveChangesAsync();
         }
-        
+
+        public async Task<List<ReadingDataEntity>> GetReadingDataAsync(int blogPostId)
+        {
+            var data = await _context.ReadingDataEntities
+                                     .Where(r => r.BlogPostId == blogPostId)
+                                     .ToListAsync();
+
+            if (data.Any())
+            {
+                return data; // Return the list of reading data
+            }
+
+            return new List<ReadingDataEntity>(); // Return an empty list if no data found
+        }
+
+
+
+
+        public async Task<(double? averageScrollPosition, double? averageReadingTime)> GetAverageScrollPositionAndReadingTimeAsync(int blogPostId)
+        {
+            var dataList = await _context.ReadingDataEntities
+                                         .Where(r => r.BlogPostId == blogPostId)
+                                         .ToListAsync();
+
+            if (dataList != null && dataList.Any())
+            {
+                // Calculate average scroll position
+                var allScrollPositions = dataList.SelectMany(r => r.ScrollPositions);
+                double? averageScrollPosition = null;
+
+                if (allScrollPositions.Any())
+                {
+                    averageScrollPosition = allScrollPositions.Average();
+                }
+
+                // Calculate average reading time
+                var allReadingTimes = dataList.Select(r => r.ReadingTime);
+                double? averageReadingTime = null;
+
+                if (allReadingTimes.Any())
+                {
+                    averageReadingTime = allReadingTimes.Average();
+                }
+
+                return (averageScrollPosition, averageReadingTime);
+            }
+
+            return (null, null); // Return null for both if no data found
+        }
+
+
     }
 }

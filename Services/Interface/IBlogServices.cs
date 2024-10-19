@@ -31,6 +31,11 @@ namespace BlogApp.Services.Interface
         Task<BlogManagerResponse> AddViewAsync(int blogPostId, string userId, string ipAddress, string userAgent);
         Task<BlogViewDetailDto> GetBlogViewDetailsAsync(int blogPostId);
         Task<IEnumerable<BlogView>> GetAllViewsAsync(List<int> blogPostIds);
+        Task<List<ReadingDataEntity>> GetReadingDataAsync(int blogPostId);
         Task IncrementUniqueViewCountAsync(int blogPostId);
+
+        Task<(double? averageScrollPosition, double? averageReadingTime)> GetAverageScrollPositionAndReadingTimeAsync(int blogPostId);
+
+
     }
 }
