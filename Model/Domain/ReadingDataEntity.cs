@@ -7,5 +7,6 @@
         public string UserId { get; set; }
         public int ReadingTime { get; set; } // Store as int (seconds)
         public List<float> ScrollPositions { get; set; }
+        public DateTime DateSaved { get; set; }
     }
 }

@@ -441,12 +441,14 @@ namespace BlogApp.Services.Implementation
                 BlogPostId = readingData.BlogPostId,
                 UserId = readingData.UserId,
                 ReadingTime = readingData.ReadingTime, // Convert TimeSpan to int (seconds)
-                ScrollPositions = readingData.ScrollPositions
+                ScrollPositions = readingData.ScrollPositions,
+                DateSaved = DateTime.UtcNow // Add the current date
             };
 
             _context.ReadingDataEntities.Add(readingDataEntity);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task<List<ReadingDataEntity>> GetReadingDataAsync(int blogPostId)
         {
@@ -497,6 +499,6 @@ namespace BlogApp.Services.Implementation
             return (null, null); // Return null for both if no data found
         }
 
-
+       
     }
 }

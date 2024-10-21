@@ -52,6 +52,7 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IBlogServices,BlogService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 
 
 builder.Services.AddCors(options =>

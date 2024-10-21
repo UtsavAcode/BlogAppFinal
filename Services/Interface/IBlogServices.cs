@@ -36,6 +36,6 @@ namespace BlogApp.Services.Interface
 
         Task<(double? averageScrollPosition, double? averageReadingTime)> GetAverageScrollPositionAndReadingTimeAsync(int blogPostId);
 
-
+      
     }
 }
