@@ -1,4 +1,5 @@
-﻿using BlogApp.Model.Domain;
+﻿using BlogApp.Data;
+using BlogApp.Model.Domain;
 using BlogApp.Model.Dto;
 using BlogApp.Services.Implementation;
 using BlogApp.Services.Interface;
@@ -16,12 +17,14 @@ namespace BlogApp.Controllers
         private readonly IBlogServices _blogServices;
         private readonly IUserServices _userServices;
         private readonly IImageService _imageService;
+        private readonly BlogDbContext _context;
 
-        public BlogController(IBlogServices blogServices, IUserServices userServices, IImageService imageService)
+        public BlogController(IBlogServices blogServices, IUserServices userServices, IImageService imageService, BlogDbContext context)
         {
             _blogServices = blogServices;
             _userServices = userServices;
             _imageService = imageService;
+            _context = context;
         }
 
 
@@ -418,6 +421,38 @@ namespace BlogApp.Controllers
             return NotFound("No data found for the specified blog post.");
         }
 
-       
+
+        [HttpPut("ConfirmBlog/{id}")]
+        public async Task<IActionResult> ConfirmBlog(int id, [FromBody] BlogConfirmationDto confirmationDto)
+        {
+            try
+            {
+                if (confirmationDto == null)
+                {
+                    return BadRequest("Confirmation data is required.");
+                }
+
+                var blogPost = await _context.BlogPosts.FindAsync(id);
+                if (blogPost == null)
+                {
+                    return NotFound($"Blog post with ID {id} not found.");
+                }
+
+                blogPost.IsConfirmed = confirmationDto.IsConfirmed;
+                _context.BlogPosts.Update(blogPost);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Blog post confirmation status updated successfully.",
+                    isConfirmed = blogPost.IsConfirmed
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the blog confirmation status.");
+            }
+        }
+
     }
 }

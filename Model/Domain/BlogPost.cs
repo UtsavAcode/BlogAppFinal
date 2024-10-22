@@ -24,6 +24,7 @@ namespace BlogApp.Model.Domain
         // public DateTime UpdateAt { get; set; }
         // public ICollection<Tag> Tags { get; set; }
 
+        public bool IsConfirmed { get; set; }
         public ICollection<BlogLike> Likes { get; set; }
         public ICollection<BlogComment> Comments { get; set; } = new List<BlogComment>();
         public ICollection<BlogView> BlogView { get; set; } = new List<BlogView>();

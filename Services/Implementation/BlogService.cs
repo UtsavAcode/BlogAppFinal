@@ -64,6 +64,7 @@ namespace BlogApp.Services.Implementation
                     AuthorId = blogPost.AuthorId,
                     AuthorName = blogPost.AuthorName,
                     FeaturedImagePath = imagePath,
+                    IsConfirmed = false,
                     Tags = tags,
                 };
 
@@ -90,6 +91,21 @@ namespace BlogApp.Services.Implementation
 
         }
 
+        public async Task<BlogManagerResponse> ConfirmBlogAsync(int blogPostId)
+        {
+            var blogPost = await _context.BlogPosts.FindAsync(blogPostId);
+
+            if (blogPost == null)
+            {
+                return new BlogManagerResponse { IsSuccess = false, Message = "Blog post not found." };
+            }
+
+            blogPost.IsConfirmed = true; // Mark the blog as confirmed
+            _context.BlogPosts.Update(blogPost);
+            await _context.SaveChangesAsync();
+
+            return new BlogManagerResponse { IsSuccess = true, Message = "Blog post confirmed successfully." };
+        }
 
 
 
